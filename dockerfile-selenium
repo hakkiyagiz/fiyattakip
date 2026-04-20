@@ -1,0 +1,74 @@
+FROM python:3.9.12
+WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -y locales firefox-esr && \
+    #sed -i -e 's/# tr_TR.UTF-8 UTF-8/tr_TR.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales
+
+# ENV LANG tr_TR.UTF-8
+# ENV LC_ALL tr_TR.UTF-8
+
+
+
+ADD detail-parser/. /app
+
+RUN pip install -r requirements.txt
+
+#COPY geckodriver_lin /
+#COPY bin/chromedriver_Linux /chromedriver_lin
+
+# FIREFOX GECKO DRIVER
+# RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
+# RUN mkdir bin
+# RUN tar -xf geckodriver-v0.30.0-linux64.tar.gz -C /app/bin
+
+
+# download and install chrome
+RUN wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_113.0.5672.63-1_amd64.deb
+RUN dpkg -i google-chrome-stable_113.0.5672.63-1_amd64.deb; apt-get -fy install
+
+RUN wget https://chromedriver.storage.googleapis.com/113.0.5672.63/chromedriver_linux64.zip
+RUN mkdir bin
+RUN unzip chromedriver_linux64.zip -d bin/
+
+
+CMD [ "python", "-u", "./app.py" ]
+
+# FROM python:3.9
+
+
+# RUN apt-get update && \
+#     apt-get install -y locales && \
+#     sed -i -e 's/# tr_TR.UTF-8 UTF-8/tr_TR.UTF-8 UTF-8/' /etc/locale.gen && \
+#     dpkg-reconfigure --frontend=noninteractive locales
+
+# ENV LANG tr_TR.UTF-8
+# ENV LC_ALL tr_TR.UTF-8
+
+
+# # # download and install chrome
+# # RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# # RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+# WORKDIR /app
+
+# RUN wget https://download-installer.cdn.mozilla.net/pub/firefox/releases/91.4.1esr/linux-x86_64/tr/firefox-91.4.1esr.tar.bz2
+# RUN tar -xvjf firefox-91.4.1esr.tar.bz2 -C /opt
+# RUN ln -s /opt/firefox/firefox /usr/bin/firefox
+
+# RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
+# RUN mkdir /app/bin
+# RUN tar -xf geckodriver-v0.30.0-linux64.tar.gz
+# RUN mv geckodriver /app/bin/geckodriver_Linux
+
+
+
+# ADD src/fetcher/. /app
+
+# RUN pip install -r requirements.txt
+
+# ADD addons/. /app
+
+# # execute the Flask app
+# CMD ["python", "-u", "app.py"]
